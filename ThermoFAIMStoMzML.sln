@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermoFAIMStoMzML", "ThermoFAIMStoMzML.csproj", "{A18C95B6-885E-4CD9-B789-052E069E6BF3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A18C95B6-885E-4CD9-B789-052E069E6BF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A18C95B6-885E-4CD9-B789-052E069E6BF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A18C95B6-885E-4CD9-B789-052E069E6BF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A18C95B6-885E-4CD9-B789-052E069E6BF3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB9087D1-08AD-4D9E-AFC0-C8748D3383C2}
+	EndGlobalSection
+EndGlobal

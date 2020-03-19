@@ -1,0 +1,1 @@
+--filter "thermoScanFilter contains exclude cv=-45" 
