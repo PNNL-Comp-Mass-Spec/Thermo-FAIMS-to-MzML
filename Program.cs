@@ -1,34 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PRISM;
+using PRISM.FileProcessor;
 
 namespace ThermoFAIMStoMzML
 {
     class Program
     {
-        private const string PROGRAM_DATE = "2020-03-18";
+        private const string PROGRAM_DATE = "2020-03-19";
 
         static int Main(string[] args)
         {
             var exeName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name;
-            var exePath = PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath();
+            var exePath = ProcessFilesOrDirectoriesBase.GetAppPath();
             var cmdLineParser = new CommandLineParser<ThermoFAIMStoMzMLOptions>(exeName, GetAppVersion())
             {
                 ProgramInfo = "This program converts a Thermo .raw file with FAIMS scans into a series of .mzML files, " +
-                              "creating one .mzML file for each FAIMS compensation voltage (CV) level in the .raw file",
+                              "creating one .mzML file for each FAIMS compensation voltage (CV) value in the .raw file",
                 ContactInfo = "Program written by Matthew Monroe for PNNL (Richland, WA) in 2020" + Environment.NewLine +
                               "E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov" + Environment.NewLine +
                               "Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/"
             };
 
+            // Allow /Conf in addition to /ParamFile for specifying a text file with Key=Value options
+            cmdLineParser.AddParamFileKey("Conf");
 
-            cmdLineParser.UsageExamples.Add("Program syntax:" + Environment.NewLine + Path.GetFileName(exePath) +
-                                            " /I:InputFileNameOrDirectoryPath [/O:OutputDirectoryName] " + Environment.NewLine +
-                                            "[/ S] [/R:LevelsToRecurse] [/Preview] " + Environment.NewLine +
+            cmdLineParser.UsageExamples.Add("Program syntax:" + Environment.NewLine + Path.GetFileName(exePath) + " " +
+                                            "/I:InputFileNameOrDirectoryPath [/O:OutputDirectoryName] " + Environment.NewLine +
+                                            "[/S] [/R:LevelsToRecurse] [/Preview] " + Environment.NewLine +
                                             "[/IE] [/L] [/LogFile:LogFileName]");
 
             var result = cmdLineParser.ParseArgs(args);
@@ -80,7 +79,7 @@ namespace ThermoFAIMStoMzML
 
         private static string GetAppVersion()
         {
-            return PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE);
+            return ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE);
         }
 
         private static void ShowErrorMessage(string message, Exception ex = null)
