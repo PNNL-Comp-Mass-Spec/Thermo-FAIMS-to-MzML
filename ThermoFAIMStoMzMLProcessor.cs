@@ -300,6 +300,18 @@ namespace ThermoFAIMStoMzML
             return true;
         }
 
+        /// <summary>
+        /// Get the default file extensions to parse
+        /// </summary>
+        /// <returns>List of extensions</returns>
+        public override IList<string> GetDefaultExtensionsToParse()
+        {
+            return new List<string>
+            {
+                ".raw"
+            };
+        }
+
         private Dictionary<float, string> GetUniqueCvValues(XRawFileIO reader)
         {
             // Dictionary where keys are CV values and values are the filter text that scans with this CV value will have
