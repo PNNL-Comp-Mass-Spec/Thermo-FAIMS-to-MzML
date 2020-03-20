@@ -12,6 +12,10 @@ namespace ThermoFAIMStoMzML
             HelpText = "Output directory path.  If omitted, the output files will be created in the program directory.")]
         public string OutputDirectoryPath { get; set; }
 
+        [Option("Timeout", HelpShowsDefault = false,
+            HelpText = "Maximum runtime for each call to MSConvert.exe")]
+        public int MSConvertTimeoutMinutes { get; set; }
+
         [Option("Recurse", "S", HelpShowsDefault = false,
             HelpText = "When true, process files in the current directory and in its subdirectories")]
         public bool RecurseDirectories { get; set; }
@@ -37,15 +41,12 @@ namespace ThermoFAIMStoMzML
             HelpText = "Preview the commands that would be run")]
         public bool Preview { get; set; }
 
-
-        //[Option("P", HelpShowsDefault = false,
-        //    HelpText = "Param file path. If supplied, it should point to a valid XML parameter file. If omitted, defaults are used.")]
-        //public string ParameterFilePath { get; set; }
-
         public ThermoFAIMStoMzMLOptions()
         {
             InputDataFilePath = string.Empty;
             OutputDirectoryPath = string.Empty;
+
+            MSConvertTimeoutMinutes = 5;
 
             CreateLogFile = false;
             LogFilePath = string.Empty;

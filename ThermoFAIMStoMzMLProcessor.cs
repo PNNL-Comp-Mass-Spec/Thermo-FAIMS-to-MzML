@@ -54,7 +54,6 @@ namespace ThermoFAIMStoMzML
             }
         }
 
-
         /// <summary>
         /// Convert a .raw file into .mzML files, creating one for each FAIMS compensation voltage value
         /// </summary>
@@ -115,6 +114,7 @@ namespace ThermoFAIMStoMzML
         {
             try
             {
+                Console.WriteLine();
                 ShowMessage("Opening " + inputFile.FullName);
 
                 var reader = new XRawFileIO(inputFile.FullName);
@@ -185,8 +185,6 @@ namespace ThermoFAIMStoMzML
         /// <returns>True if success, false an error</returns>
         private bool ConvertFile(FileInfo msConvertFile, FileInfo inputFile, FileInfo outputFile, string cvTextFilter)
         {
-            const int maxRuntimeMinutes = 180;
-
             string inputFilePath;
             string outputFilePath;
             if (inputFile.DirectoryName != null &&
@@ -216,6 +214,7 @@ namespace ThermoFAIMStoMzML
             }
 
             ShowDebug("Processing file with MSConvert", false);
+            ShowDebugNoLog(string.Format("{0} {1}", msConvertFile.Name, arguments));
             Console.WriteLine();
 
             var programRunner = new ProgRunner
@@ -235,7 +234,7 @@ namespace ThermoFAIMStoMzML
             programRunner.StartAndMonitorProgram();
 
             // Wait for the job to complete
-            var success = WaitForMSConvertToFinish(programRunner, msConvertFile, maxRuntimeMinutes);
+            var success = WaitForMSConvertToFinish(programRunner, msConvertFile, Options.MSConvertTimeoutMinutes);
 
             return success;
         }
