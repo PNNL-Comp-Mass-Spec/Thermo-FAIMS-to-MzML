@@ -143,7 +143,7 @@ namespace ThermoFAIMStoMzML
 
                     Console.WriteLine();
                     ShowMessage(string.Format(
-                        "{0}% complete: FAIMS Compensation Voltage {1:F2}",
+                        "{0}% complete: FAIMS compensation voltage {1:F2}",
                         percentComplete, cvInfo.Key));
 
                     var outputFileName = string.Format("{0}_{1:F0}.mzML", baseName, cvInfo.Key);
@@ -415,7 +415,6 @@ namespace ThermoFAIMStoMzML
             var startTime = DateTime.UtcNow;
             var runtimeExceeded = false;
 
-            ShowMessage("Determining FAIMS CV values", false);
             // Loop until program is complete, or until MaxRuntimeSeconds seconds elapses
             while (programRunner.State != ProgRunner.States.NotMonitoring)
             {
@@ -434,7 +433,7 @@ namespace ThermoFAIMStoMzML
             if (runtimeExceeded)
             {
                 ShowErrorMessage(string.Format(
-                    "{0} runtime surpassed {1} minutes; aborting",
+                    "{0} runtime surpassed {1} minutes; aborting.  Use /Timeout to allow MSConvert to run longer, e.g. /Timeout:10",
                     msConvertFile.Name, maxRuntimeMinutes));
 
                 programRunner.StopMonitoringProgram(kill: true);

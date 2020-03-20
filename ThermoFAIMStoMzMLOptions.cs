@@ -9,7 +9,7 @@ namespace ThermoFAIMStoMzML
         public string InputDataFilePath { get; set; }
 
         [Option("OutputDirectory", "O", HelpShowsDefault = false,
-            HelpText = "Output directory path.  If omitted, the output files will be created in the program directory.")]
+            HelpText = "Output directory path; if omitted, the output files will be created in the program directory.")]
         public string OutputDirectoryPath { get; set; }
 
         [Option("Timeout", HelpShowsDefault = false,
@@ -21,7 +21,7 @@ namespace ThermoFAIMStoMzML
         public bool RecurseDirectories { get; set; }
 
         [Option("RecurseLevels", "R", ArgExistsProperty = nameof(RecurseDirectories), HelpShowsDefault = false,
-            HelpText = "When RecurseDirectories is true, this defines the levels to recurse; " +
+            HelpText = "When RecurseDirectories is true, this defines the levels to recurse;\n" +
                        "0 to recurse infinitely; 1 to not recurse; 2 to process the current directory and files in subdirectories")]
         public int MaxLevelsToRecurse { get; set; }
 
