@@ -117,7 +117,13 @@ namespace ThermoFAIMStoMzML
                 Console.WriteLine();
                 ShowMessage("Opening " + inputFile.FullName);
 
-                var reader = new XRawFileIO(inputFile.FullName);
+                // Disable loading the method
+                // Method loading doesn't work on Linux and this program doesn't need that information
+                var readerOptions = new ThermoReaderOptions {
+                    LoadMSMethodInfo = false
+                };
+
+                var reader = new XRawFileIO(inputFile.FullName, readerOptions);
 
                 ShowMessage("Determining FAIMS CV values", false);
 
