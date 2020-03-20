@@ -317,6 +317,10 @@ namespace ThermoFAIMStoMzML
             // Dictionary where keys are CV values and values are the filter text that scans with this CV value will have
             var cvValues = new Dictionary<float, string>();
 
+            // Dictionary where keys are CV values and values are the number of scans with this value
+            // This is used when Options.Preview is true
+            var cvValueStats = new Dictionary<float, int>();
+
             for (var scanNumber = reader.ScanStart; scanNumber <= reader.ScanEnd; scanNumber++)
             {
                 var success = GetCvValue(reader, scanNumber, out var cvValue, out var filterTextMatch, true);
@@ -324,9 +328,21 @@ namespace ThermoFAIMStoMzML
                     continue;
 
                 if (cvValues.ContainsKey(cvValue))
+                {
+                    var scanCount = cvValueStats[cvValue];
+                    cvValueStats[cvValue] = scanCount + 1;
+                    if (Options.Preview && scanCount > 50)
+                    {
+                        // Assume that we have found all of the CV values (since typically machines cycle through a CV list)
+                        // Ignore the remaining scans
+                        break;
+                    }
+
                     continue;
+                }
 
                 cvValues.Add(cvValue, filterTextMatch);
+                cvValueStats.Add(cvValue, 1);
             }
 
             return cvValues;
