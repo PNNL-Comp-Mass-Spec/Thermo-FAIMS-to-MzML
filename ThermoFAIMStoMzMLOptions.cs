@@ -13,16 +13,16 @@ namespace ThermoFAIMStoMzML
         public string OutputDirectoryPath { get; set; }
 
         [Option("Timeout", HelpShowsDefault = false,
-            HelpText = "Maximum runtime for each call to MSConvert.exe")]
+            HelpText = "Maximum runtime (in minutes) for each call to MSConvert.exe")]
         public int MSConvertTimeoutMinutes { get; set; }
 
         [Option("Recurse", "S", HelpShowsDefault = false,
-            HelpText = "When true, process files in the current directory and in its subdirectories")]
+            HelpText = "When true, process files in the current directory and in all of its subdirectories")]
         public bool RecurseDirectories { get; set; }
 
         [Option("RecurseLevels", "R", ArgExistsProperty = nameof(RecurseDirectories), HelpShowsDefault = false,
             HelpText = "When RecurseDirectories is true, this defines the levels to recurse;\n" +
-                       "0 to recurse infinitely; 1 to not recurse; 2 to process the current directory and files in subdirectories")]
+                       "0 to recurse infinitely; 1 to not recurse; 2 to process the current directory and files in its subdirectories")]
         public int MaxLevelsToRecurse { get; set; }
 
         [Option("IgnoreErrors", "IE", HelpShowsDefault = false,

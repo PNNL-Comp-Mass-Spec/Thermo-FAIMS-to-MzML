@@ -7,7 +7,7 @@ namespace ThermoFAIMStoMzML
 {
     class Program
     {
-        private const string PROGRAM_DATE = "2020-03-19";
+        private const string PROGRAM_DATE = "2020-03-23";
 
         static int Main(string[] args)
         {
