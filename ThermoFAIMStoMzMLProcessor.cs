@@ -248,7 +248,7 @@ namespace ThermoFAIMStoMzML
             cvValue = 0;
             filterTextMatch = string.Empty;
 
-            if (!reader.GetScanInfo(scanNumber, out clsScanInfo scanInfo))
+            if (!reader.GetScanInfo(scanNumber, out var scanInfo))
             {
                 if (showWarnings)
                 {
