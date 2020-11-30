@@ -41,6 +41,9 @@ namespace ThermoFAIMStoMzML
             HelpText = "Preview the commands that would be run")]
         public bool Preview { get; set; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ThermoFAIMStoMzMLOptions()
         {
             InputDataFilePath = string.Empty;

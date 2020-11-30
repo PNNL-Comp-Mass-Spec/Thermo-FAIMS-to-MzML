@@ -7,9 +7,11 @@ namespace ThermoFAIMStoMzML
 {
     class Program
     {
-        private const string PROGRAM_DATE = "2020-03-23";
+        // Ignore Spelling: conf
 
         static int Main(string[] args)
+        private const string PROGRAM_DATE = "2020-11-30";
+
         {
             var exeName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name;
             var exePath = ProcessFilesOrDirectoriesBase.GetAppPath();

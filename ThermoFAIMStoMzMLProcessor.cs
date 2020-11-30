@@ -11,8 +11,10 @@ namespace ThermoFAIMStoMzML
 {
     class ThermoFAIMStoMzMLProcessor : ProcessFilesBase
     {
+        // Ignore Spelling: cv, outfile
+
         /// <summary>
-        /// This Regex matches scan filters of the form
+        /// This RegEx matches scan filters of the form
         /// FTMS + p NSI cv=-45.00 Full ms
         /// ITMS + c NSI cv=-65.00 r d Full ms2 438.7423@cid35.00
         /// </summary>
@@ -67,9 +69,9 @@ namespace ThermoFAIMStoMzML
                 var proteowizardPath = InformedProteomics.Backend.MassSpecData.ProteoWizardReader.FindPwizPath();
                 if (string.IsNullOrWhiteSpace(proteowizardPath))
                 {
-                    ShowWarning("Unable to find the installed location of Proteowizard, which should have msconvert.exe");
+                    ShowWarning("Unable to find the installed location of ProteoWizard, which should have msconvert.exe");
 
-                    ShowMessage("Typical locations for proteowizard:");
+                    ShowMessage("Typical locations for ProteoWizard:");
                     if (Environment.Is64BitProcess)
                     {
                         ShowMessage(@"C:\Program Files\ProteoWizard");
@@ -449,7 +451,7 @@ namespace ThermoFAIMStoMzML
             var startTime = DateTime.UtcNow;
             var runtimeExceeded = false;
 
-            // Loop until program is complete, or until MaxRuntimeSeconds seconds elapses
+            // Loop until program is complete, or until MaxRuntimeSeconds elapses
             while (programRunner.State != ProgRunner.States.NotMonitoring)
             {
                 ProgRunner.SleepMilliseconds(2000);
