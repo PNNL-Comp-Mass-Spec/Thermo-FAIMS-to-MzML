@@ -9,7 +9,7 @@ using ThermoRawFileReader;
 // ReSharper disable SuggestBaseTypeForParameter
 namespace ThermoFAIMStoMzML
 {
-    class ThermoFAIMStoMzMLProcessor : ProcessFilesBase
+    internal class ThermoFAIMStoMzMLProcessor : ProcessFilesBase
     {
         // Ignore Spelling: cv, outfile
 
@@ -27,7 +27,7 @@ namespace ThermoFAIMStoMzML
         /// <remarks>This is used to limit the number of warnings reported by GetCvValue</remarks>
         private readonly Dictionary<string, List<int>> mCvScanWarnings = new Dictionary<string, List<int>>();
 
-        ThermoFAIMStoMzMLOptions Options { get; }
+        private ThermoFAIMStoMzMLOptions Options { get; }
 
         /// <summary>
         /// Constructor
@@ -88,14 +88,11 @@ namespace ThermoFAIMStoMzML
 
                 var msConvertFile = new FileInfo(Path.Combine(proteowizardPath, "msconvert.exe"));
 
-                if (!msConvertFile.Exists)
-                {
-                    ShowWarning("Could not find msconvert.exe at " + msConvertFile.FullName);
-                    return false;
-                }
+                if (msConvertFile.Exists)
+                    return ConvertFile(msConvertFile, inputFile, outputDirectory);
 
-                return ConvertFile(msConvertFile, inputFile, outputDirectory);
-
+                ShowWarning("Could not find msconvert.exe at " + msConvertFile.FullName);
+                return false;
 
             }
             catch (Exception ex)
@@ -195,8 +192,7 @@ namespace ThermoFAIMStoMzML
         {
             string inputFilePath;
             string outputFilePath;
-            if (inputFile.DirectoryName != null &&
-                inputFile.DirectoryName.Equals(outputFile.DirectoryName))
+            if (inputFile.DirectoryName?.Equals(outputFile.DirectoryName) == true)
             {
                 inputFilePath = inputFile.Name;
                 outputFilePath = outputFile.Name;
@@ -383,7 +379,6 @@ namespace ThermoFAIMStoMzML
 
                 try
                 {
-
                     // Obtain the full path to the input file
                     var inputFile = new FileInfo(inputFilePath);
 
@@ -403,7 +398,6 @@ namespace ThermoFAIMStoMzML
 
                     var success = ConvertFile(inputFile, outputDirectory);
                     return success;
-
                 }
                 catch (Exception ex)
                 {
@@ -416,8 +410,6 @@ namespace ThermoFAIMStoMzML
                 HandleException("Error in ProcessFile", ex);
                 return false;
             }
-
-
         }
 
         private void ShowDebugNoLog(string message, int emptyLinesBeforeMessage = 0)
@@ -447,7 +439,6 @@ namespace ThermoFAIMStoMzML
         /// <returns>True if success, false the maximum runtime was exceeded or an error occurred</returns>
         private bool WaitForMSConvertToFinish(ProgRunner programRunner, FileInfo msConvertFile, int maxRuntimeMinutes)
         {
-
             var startTime = DateTime.UtcNow;
             var runtimeExceeded = false;
 

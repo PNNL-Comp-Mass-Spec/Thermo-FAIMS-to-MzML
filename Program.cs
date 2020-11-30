@@ -5,13 +5,13 @@ using PRISM.FileProcessor;
 
 namespace ThermoFAIMStoMzML
 {
-    class Program
+    internal static class Program
     {
         // Ignore Spelling: conf
 
-        static int Main(string[] args)
         private const string PROGRAM_DATE = "2020-11-30";
 
+        private static int Main(string[] args)
         {
             var exeName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name;
             var exePath = ProcessFilesOrDirectoriesBase.GetAppPath();

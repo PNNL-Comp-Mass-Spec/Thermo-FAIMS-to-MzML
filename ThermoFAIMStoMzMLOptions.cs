@@ -70,6 +70,5 @@ namespace ThermoFAIMStoMzML
 
             return true;
         }
-
     }
 }
