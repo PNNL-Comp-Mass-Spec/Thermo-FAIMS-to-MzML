@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using PRISM;
 using PRISM.FileProcessor;
@@ -337,9 +338,15 @@ namespace ThermoFAIMStoMzML
                     cvValueStats[cvValue] = scanCount + 1;
                     if (Options.Preview && scanCount > 50)
                     {
-                        // Assume that we have found all of the CV values (since typically machines cycle through a CV list)
-                        // Ignore the remaining scans
-                        break;
+                        // If all of the CV values have been found 50+ times, assume that we have found all of the CV values
+                        // (since typically machines cycle through a CV list)
+
+                        var minObservedCount = (from item in cvValueStats select item.Value).Min();
+                        if (minObservedCount > 50)
+                        {
+                            // Ignore the remaining scans
+                            break;
+                        }
                     }
 
                     continue;
