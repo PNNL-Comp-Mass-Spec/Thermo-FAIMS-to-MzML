@@ -19,14 +19,14 @@ namespace ThermoFAIMStoMzML
         /// FTMS + p NSI cv=-45.00 Full ms
         /// ITMS + c NSI cv=-65.00 r d Full ms2 438.7423@cid35.00
         /// </summary>
-        private readonly Regex mCvMatcher = new Regex("cv=(?<CV>[0-9.+-]+)");
+        private readonly Regex mCvMatcher = new("cv=(?<CV>[0-9.+-]+)");
 
         /// <summary>
         /// Keys in this dictionary are .raw file names
         /// Values are a list of scans that do not have cv= or have an invalid number after the equals sign
         /// </summary>
         /// <remarks>This is used to limit the number of warnings reported by GetCvValue</remarks>
-        private readonly Dictionary<string, List<int>> mCvScanWarnings = new Dictionary<string, List<int>>();
+        private readonly Dictionary<string, List<int>> mCvScanWarnings = new();
 
         private ThermoFAIMStoMzMLOptions Options { get; }
 
