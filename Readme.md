@@ -69,7 +69,7 @@ Source code: https://github.com/PNNL-Comp-Mass-Spec/Thermo-FAIMS-to-MzML
 ## License
 
 The Thermo FAIMS to mzML Converter is licensed under the 2-Clause BSD License; 
-you may not use this file except in compliance with the License. You may obtain 
+you may not use this program except in compliance with the License. You may obtain 
 a copy of the License at https://opensource.org/licenses/BSD-2-Clause
 
 Copyright 2020 Battelle Memorial Institute
