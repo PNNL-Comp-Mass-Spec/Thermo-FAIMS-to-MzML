@@ -67,6 +67,9 @@ namespace ThermoFAIMStoMzML
         {
             try
             {
+                // This project has a reference to the PSI_Interface NuGet package because InformedProteomics refers to it
+                // The reference is probably not required, but it doesn't hurt
+
                 var proteowizardPath = InformedProteomics.Backend.MassSpecData.ProteoWizardReader.FindPwizPath();
                 if (string.IsNullOrWhiteSpace(proteowizardPath))
                 {
@@ -94,7 +97,6 @@ namespace ThermoFAIMStoMzML
 
                 ShowWarning("Could not find msconvert.exe at " + msConvertFile.FullName);
                 return false;
-
             }
             catch (Exception ex)
             {

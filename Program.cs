@@ -9,7 +9,7 @@ namespace ThermoFAIMStoMzML
     {
         // Ignore Spelling: conf
 
-        private const string PROGRAM_DATE = "2020-11-30";
+        private const string PROGRAM_DATE = "2021-04-03";
 
         private static int Main(string[] args)
         {
