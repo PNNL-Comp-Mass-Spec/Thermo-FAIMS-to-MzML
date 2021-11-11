@@ -9,7 +9,7 @@ namespace ThermoFAIMStoMzML
     {
         // Ignore Spelling: conf
 
-        private const string PROGRAM_DATE = "2021-04-03";
+        private const string PROGRAM_DATE = "2021-11-11";
 
         private static int Main(string[] args)
         {
@@ -21,7 +21,7 @@ namespace ThermoFAIMStoMzML
                               "creating one .mzML file for each FAIMS compensation voltage (CV) value in the .raw file",
                 ContactInfo = "Program written by Matthew Monroe for PNNL (Richland, WA) in 2020" + Environment.NewLine +
                               "E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov" + Environment.NewLine +
-                              "Website: https://omics.pnl.gov/ or https://panomics.pnnl.gov/"
+                              "Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics"
             };
 
             // Allow /Conf in addition to /ParamFile for specifying a text file with Key=Value options
