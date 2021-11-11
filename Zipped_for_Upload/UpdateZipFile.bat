@@ -1,0 +1,3 @@
+"C:\Program Files\7-Zip\7z.exe" a ThermoFAIMStoMzML_Program.zip ..\bin\ThermoFAIMStoMzML.exe ..\bin\InformedProteomics.Backend.dll ..\bin\InformedProteomics.Backend.MassSpecData.dll ..\bin\PRISM.dll ..\bin\PSI_Interface.dll ..\bin\ThermoFisher.CommonCore.BackgroundSubtraction.dll ..\bin\ThermoFisher.CommonCore.Data.dll ..\bin\ThermoFisher.CommonCore.MassPrecisionEstimator.dll ..\bin\ThermoFisher.CommonCore.RawFileReader.dll ..\bin\ThermoRawFileReader.dll ..\Readme.md ..\Data\QC_TD_Lumos01_Misc_21Oct20_Aragorn_18-12-13_5.raw ..\Data\Run_Program.bat
+
+pause 
