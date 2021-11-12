@@ -15,27 +15,34 @@ namespace ThermoFAIMStoMzML
         {
             var exeName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name;
             var exePath = ProcessFilesOrDirectoriesBase.GetAppPath();
-            var cmdLineParser = new CommandLineParser<ThermoFAIMStoMzMLOptions>(exeName, GetAppVersion())
+
+            var parser = new CommandLineParser<ThermoFAIMStoMzMLOptions>(exeName, GetAppVersion())
             {
                 ProgramInfo = "This program converts a Thermo .raw file with FAIMS scans into a series of .mzML files, " +
                               "creating one .mzML file for each FAIMS compensation voltage (CV) value in the .raw file",
-                ContactInfo = "Program written by Matthew Monroe for PNNL (Richland, WA) in 2020" + Environment.NewLine +
+                ContactInfo = "Program written by Matthew Monroe for PNNL (Richland, WA)" + Environment.NewLine +
                               "E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov" + Environment.NewLine +
                               "Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics"
             };
 
             // Allow /Conf in addition to /ParamFile for specifying a text file with Key=Value options
-            cmdLineParser.AddParamFileKey("Conf");
+            parser.AddParamFileKey("Conf");
 
-            cmdLineParser.UsageExamples.Add("Program syntax:" + Environment.NewLine + Path.GetFileName(exePath) + " " +
-                                            "/I:InputFileNameOrDirectoryPath [/O:OutputDirectoryName] " + Environment.NewLine +
-                                            "[/S] [/R:LevelsToRecurse] [/Preview] " + Environment.NewLine +
-                                            "[/IE] [/L] [/LogFile:LogFileName]");
+            parser.UsageExamples.Add("Program syntax:" + Environment.NewLine + Path.GetFileName(exePath) + " " +
+                                     "/I:InputFileNameOrDirectoryPath [/O:OutputDirectoryName] " + Environment.NewLine +
+                                     "[/S] [/R:LevelsToRecurse] [/Preview] " + Environment.NewLine +
+                                     "[/IE] [/L] [/LogFile:LogFileName]");
 
-            var result = cmdLineParser.ParseArgs(args);
+            var result = parser.ParseArgs(args);
             var options = result.ParsedResults;
+
             if (!result.Success || !options.Validate())
             {
+                if (parser.CreateParamFileProvided)
+                {
+                    return 0;
+                }
+
                 // Delay for 750 msec in case the user double clicked this file from within Windows Explorer (or started the program via a shortcut)
                 System.Threading.Thread.Sleep(750);
                 return -1;
