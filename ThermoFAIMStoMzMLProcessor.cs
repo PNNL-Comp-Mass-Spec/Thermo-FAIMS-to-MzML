@@ -121,7 +121,8 @@ namespace ThermoFAIMStoMzML
 
                 // Disable loading the method
                 // Method loading doesn't work on Linux and this program doesn't need that information
-                var readerOptions = new ThermoReaderOptions {
+                var readerOptions = new ThermoReaderOptions
+                {
                     LoadMSMethodInfo = false
                 };
 
@@ -241,9 +242,7 @@ namespace ThermoFAIMStoMzML
             programRunner.StartAndMonitorProgram();
 
             // Wait for the job to complete
-            var success = WaitForMSConvertToFinish(programRunner, msConvertFile, Options.MSConvertTimeoutMinutes);
-
-            return success;
+            return WaitForMSConvertToFinish(programRunner, msConvertFile, Options.MSConvertTimeoutMinutes);
         }
 
         private bool GetCvValue(XRawFileIO reader, int scanNumber, out float cvValue, out string filterTextMatch, bool showWarnings = false)
@@ -255,7 +254,7 @@ namespace ThermoFAIMStoMzML
             {
                 if (showWarnings)
                 {
-                    OnWarningEvent(string.Format("Scan {0} not found; skipping", scanNumber));
+                    OnWarningEvent("Scan {0} not found; skipping", scanNumber);
                 }
                 return false;
             }
@@ -443,7 +442,7 @@ namespace ThermoFAIMStoMzML
         /// Wait for the program runner to finish
         /// </summary>
         /// <param name="programRunner">Program runner instance</param>
-        /// <param name="msConvertFile"></param>
+        /// <param name="msConvertFile">msconvert.exe</param>
         /// <param name="maxRuntimeMinutes">Maximum runtime, in minutes</param>
         /// <returns>True if success, false the maximum runtime was exceeded or an error occurred</returns>
         private bool WaitForMSConvertToFinish(ProgRunner programRunner, FileInfo msConvertFile, int maxRuntimeMinutes)
