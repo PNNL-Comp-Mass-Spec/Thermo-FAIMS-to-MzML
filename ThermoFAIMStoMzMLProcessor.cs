@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using InformedProteomics.Backend.MassSpecData;
 using PRISM;
 using PRISM.FileProcessor;
-using PSI_Interface.MSData.mzML;
 using ThermoRawFileReader;
 
 // ReSharper disable SuggestBaseTypeForParameter

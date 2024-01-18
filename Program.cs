@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using PRISM;
-using PRISM.FileProcessor;
 
 namespace ThermoFAIMStoMzML
 {
