@@ -6,9 +6,9 @@ namespace ThermoFAIMStoMzML
 {
     internal static class Program
     {
-        // Ignore Spelling: conf
+        // Ignore Spelling: conf, Sto
 
-        private const string PROGRAM_DATE = "2024-01-17";
+        private const string PROGRAM_DATE = "2024-01-18";
 
         private static int Main(string[] args)
         {

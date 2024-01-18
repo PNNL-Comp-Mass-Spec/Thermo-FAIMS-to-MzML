@@ -4,6 +4,8 @@ namespace ThermoFAIMStoMzML
 {
     internal class ThermoFAIMStoMzMLOptions
     {
+        // Ignore Spelling: Sto
+
         [Option("InputFile", "I", ArgPosition = 1, Required = true, HelpShowsDefault = false, IsInputFilePath = true,
             HelpText = "The name (or path) of a Thermo .raw file to convert into .mzML files; can contain the wildcard character *")]
         public string InputDataFilePath { get; set; }

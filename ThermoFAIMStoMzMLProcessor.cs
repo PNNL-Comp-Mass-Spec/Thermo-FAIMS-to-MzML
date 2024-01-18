@@ -12,7 +12,7 @@ namespace ThermoFAIMStoMzML
 {
     internal class ThermoFAIMStoMzMLProcessor : ProcessFilesBase
     {
-        // Ignore Spelling: cv, outfile
+        // Ignore Spelling: cv, outfile, Sto
 
         /// <summary>
         /// This RegEx matches scan filters of the form
@@ -93,7 +93,9 @@ namespace ThermoFAIMStoMzML
                 var msConvertFile = new FileInfo(Path.Combine(proteowizardPath, "msconvert.exe"));
 
                 if (msConvertFile.Exists)
+                {
                     return ConvertFile(msConvertFile, inputFile, outputDirectory);
+                }
 
                 ShowWarning("Could not find msconvert.exe at " + msConvertFile.FullName);
                 return false;
@@ -119,8 +121,8 @@ namespace ThermoFAIMStoMzML
                 Console.WriteLine();
                 ShowMessage("Opening " + inputFile.FullName);
 
-                // Disable loading the method
-                // Method loading doesn't work on Linux and this program doesn't need that information
+                // Disable loading the MS method
+                // Required since method loading doesn't work on Linux and this program doesn't need that information
                 var readerOptions = new ThermoReaderOptions
                 {
                     LoadMSMethodInfo = false
