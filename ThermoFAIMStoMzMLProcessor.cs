@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using InformedProteomics.Backend.MassSpecData;
 using PRISM;
 using PRISM.FileProcessor;
+using PSI_Interface.MSData.mzML;
 using ThermoRawFileReader;
 
 // ReSharper disable SuggestBaseTypeForParameter
@@ -161,9 +163,21 @@ namespace ThermoFAIMStoMzML
                     var success = ConvertFile(msConvertFile, inputFile, outputFile, cvInfo.Value);
 
                     if (!success)
+                    {
                         successOverall = false;
+                    }
                     else
+                    {
+                        if (Options.RenumberScans)
+                        {
+                            var renumbered = RenumberScans(outputFile);
+
+                            if (!renumbered)
+                                successOverall = false;
+                        }
+
                         successTotal++;
+                    }
 
                     valuesProcessed++;
                 }
@@ -416,6 +430,61 @@ namespace ThermoFAIMStoMzML
             catch (Exception ex)
             {
                 HandleException("Error in ProcessFile", ex);
+                return false;
+            }
+        }
+
+        private bool RenumberScans(FileInfo originalFile)
+        {
+            var updatedFile = new FileInfo(originalFile.FullName + ".renumbered");
+
+            try
+            {
+                var reader = new PSI_Interface.MSData.mzML.MzMLReader(originalFile.FullName);
+                var mzMLData = reader.Read();
+
+                var writer = new MzMLWriter(updatedFile.FullName)
+                {
+                    MzMLType = MzMLSchemaType.MzML
+                };
+
+                var scanNumber = 0;
+
+                foreach (var spectrum in mzMLData.run.spectrumList.spectrum)
+                {
+                    scanNumber++;
+
+                    spectrum.id = string.Format("controllerType=0 controllerNumber=1 scan={0}", scanNumber);
+                    spectrum.index = string.Format("{0}", scanNumber - 1);
+
+                    foreach (var scanInfo in spectrum.scanList.scan)
+                    {
+                        scanInfo.spectrumRef = scanInfo.spectrumRef;
+                    }
+                }
+
+                writer.Write(mzMLData);
+            }
+            catch (Exception ex)
+            {
+                HandleException("Error renumbering scans in RenumberScans", ex);
+                return false;
+            }
+
+            try
+            {
+                // Swap the files
+                var finalFilePath = originalFile.FullName;
+
+                originalFile.MoveTo(originalFile.FullName + ".original");
+
+                updatedFile.MoveTo(finalFilePath);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                HandleException("Error swapping files in RenumberScans", ex);
                 return false;
             }
         }

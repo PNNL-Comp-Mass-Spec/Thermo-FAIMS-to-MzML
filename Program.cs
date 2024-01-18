@@ -9,7 +9,7 @@ namespace ThermoFAIMStoMzML
     {
         // Ignore Spelling: conf
 
-        private const string PROGRAM_DATE = "2021-11-11";
+        private const string PROGRAM_DATE = "2024-01-17";
 
         private static int Main(string[] args)
         {
@@ -30,6 +30,7 @@ namespace ThermoFAIMStoMzML
 
             parser.UsageExamples.Add("Program syntax:" + Environment.NewLine + Path.GetFileName(exePath) + " " +
                                      "/I:InputFileNameOrDirectoryPath [/O:OutputDirectoryName] " + Environment.NewLine +
+                                     "[/Renumber] " + Environment.NewLine +
                                      "[/S] [/R:LevelsToRecurse] [/Preview] " + Environment.NewLine +
                                      "[/IE] [/L] [/LogFile:LogFileName]");
 

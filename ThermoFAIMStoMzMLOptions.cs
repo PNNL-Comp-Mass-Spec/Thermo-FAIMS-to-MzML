@@ -12,6 +12,10 @@ namespace ThermoFAIMStoMzML
             HelpText = "Output directory path; if omitted, the output files will be created in the program directory.")]
         public string OutputDirectoryPath { get; set; }
 
+        [Option("RenumberScans", "Renumber", HelpShowsDefault = false,
+            HelpText = "When true, update scan numbers so that the first scan is 1 and there are no scan gaps")]
+        public bool RenumberScans { get; set; }
+
         [Option("Timeout", HelpShowsDefault = false,
             HelpText = "Maximum runtime (in minutes) for each call to MSConvert.exe")]
         public int MSConvertTimeoutMinutes { get; set; }
@@ -49,6 +53,7 @@ namespace ThermoFAIMStoMzML
             InputDataFilePath = string.Empty;
             OutputDirectoryPath = string.Empty;
 
+            RenumberScans = false;
             MSConvertTimeoutMinutes = 5;
 
             CreateLogFile = false;
