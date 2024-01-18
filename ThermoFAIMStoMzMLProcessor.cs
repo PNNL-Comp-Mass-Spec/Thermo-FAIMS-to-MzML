@@ -221,12 +221,33 @@ namespace ThermoFAIMStoMzML
                 outputFilePath = outputFile.FullName;
             }
 
+            string scanFilter;
+
+            if (Options.ScanStart > 0 || Options.ScanEnd > 0)
+            {
+                // If ScanStart is 0 or 1 and ScanEnd is 1000, the scan filter will look like:
+                // --filter "scanNumber [1,1000]"
+
+                // If ScanStart is 30000 and ScanEnd is 0, the scan filter will look like:
+                // --filter "scanNumber [30000-]"
+
+                var startScan = Options.ScanStart == 0 ? 1 : Options.ScanStart;
+                var endScan= Options.ScanEnd == 0 ? "-" : string.Format(",{0}", Options.ScanEnd);
+
+                scanFilter = string.Format(" --filter \"scanNumber [{0}{1}]\"", startScan, endScan);
+            }
+            else
+            {
+                scanFilter = string.Empty;
+            }
+
             var arguments = string.Format(
-                " --32 --mzML" +
+                " --32 --mzML --zlib" +
                 " --filter \"thermoScanFilter contains include {0}\"" +
-                " --outfile {1}" +
-                " {2}",
-                cvTextFilter, outputFilePath, inputFilePath);
+                "{1}" +
+                " --outfile {2}" +
+                " {3}",
+                cvTextFilter, scanFilter, outputFilePath, inputFilePath);
 
             if (Options.Preview)
             {

@@ -16,6 +16,14 @@ namespace ThermoFAIMStoMzML
             HelpText = "When true, update scan numbers so that the first scan is 1 and there are no scan gaps")]
         public bool RenumberScans { get; set; }
 
+        [Option("ScanStart", "Start", HelpShowsDefault = false,
+            HelpText = "When non-zero, the first scan number to include in the output file")]
+        public int ScanStart { get; set; }
+
+        [Option("ScanEnd", "End", HelpShowsDefault = false,
+            HelpText = "When non-zero, the last scan number to include in the output file. If ScanStart is non-zero but ScanEnd is zero, will include all scans from ScanStart to the end of the file")]
+        public int ScanEnd { get; set; }
+
         [Option("Timeout", HelpShowsDefault = false,
             HelpText = "Maximum runtime (in minutes) for each call to MSConvert.exe")]
         public int MSConvertTimeoutMinutes { get; set; }
@@ -55,6 +63,9 @@ namespace ThermoFAIMStoMzML
 
             RenumberScans = false;
             MSConvertTimeoutMinutes = 5;
+            ScanStart = 0;
+            ScanEnd = 0;
+
 
             CreateLogFile = false;
             LogFilePath = string.Empty;
