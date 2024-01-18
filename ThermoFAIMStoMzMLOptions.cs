@@ -62,10 +62,10 @@ namespace ThermoFAIMStoMzML
             OutputDirectoryPath = string.Empty;
 
             RenumberScans = false;
-            MSConvertTimeoutMinutes = 5;
             ScanStart = 0;
             ScanEnd = 0;
 
+            MSConvertTimeoutMinutes = 15;
 
             CreateLogFile = false;
             LogFilePath = string.Empty;
