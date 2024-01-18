@@ -158,9 +158,9 @@ namespace ThermoFAIMStoMzML
                         percentComplete, cvInfo.Key));
 
                     var outputFileName = string.Format("{0}_{1:F0}.mzML", baseName, cvInfo.Key);
-                    var outputFile = new FileInfo(Path.Combine(outputDirectory.FullName, outputFileName));
+                    var cvFilteredFile = new FileInfo(Path.Combine(outputDirectory.FullName, outputFileName));
 
-                    var success = ConvertFile(msConvertFile, inputFile, outputFile, cvInfo.Value);
+                    var success = ConvertFile(msConvertFile, inputFile, cvFilteredFile, cvInfo.Key, cvInfo.Value);
 
                     if (!success)
                     {
@@ -170,10 +170,25 @@ namespace ThermoFAIMStoMzML
                     {
                         if (Options.RenumberScans)
                         {
-                            var renumbered = RenumberScans(outputFile);
+                            var renumbered = RenumberScans(cvFilteredFile, out var renumberedScansFile);
 
-                            if (!renumbered)
+                            if (renumbered)
+                            {
+                                var indexSuccess = ReindexRenumberedFile(msConvertFile, cvFilteredFile, renumberedScansFile, Options.MSConvertTimeoutMinutes);
+
+                                if (indexSuccess)
+                                {
+                                    renumberedScansFile.Delete();
+                                }
+                                else
+                                {
+                                    successOverall = false;
+                                }
+                            }
+                            else
+                            {
                                 successOverall = false;
+                            }
                         }
 
                         successTotal++;
@@ -204,9 +219,10 @@ namespace ThermoFAIMStoMzML
         /// <param name="msConvertFile">msconvert.exe</param>
         /// <param name="inputFile">Input .raw file</param>
         /// <param name="outputFile">Output .mzML file</param>
+        /// <param name="cvValue">Compensation voltage value</param>
         /// <param name="cvTextFilter">String to find in the scan filter, e.g. cv=-45.00</param>
         /// <returns>True if success, false an error</returns>
-        private bool ConvertFile(FileInfo msConvertFile, FileInfo inputFile, FileInfo outputFile, string cvTextFilter)
+        private bool ConvertFile(FileInfo msConvertFile, FileInfo inputFile, FileInfo outputFile, float cvValue, string cvTextFilter)
         {
             string inputFilePath;
             string outputFilePath;
@@ -232,7 +248,7 @@ namespace ThermoFAIMStoMzML
                 // --filter "scanNumber [30000-]"
 
                 var startScan = Options.ScanStart == 0 ? 1 : Options.ScanStart;
-                var endScan= Options.ScanEnd == 0 ? "-" : string.Format(",{0}", Options.ScanEnd);
+                var endScan = Options.ScanEnd == 0 ? "-" : string.Format(",{0}", Options.ScanEnd);
 
                 scanFilter = string.Format(" --filter \"scanNumber [{0}{1}]\"", startScan, endScan);
             }
@@ -276,8 +292,9 @@ namespace ThermoFAIMStoMzML
 
             programRunner.StartAndMonitorProgram();
 
-            // Wait for the job to complete
-            return WaitForMSConvertToFinish(programRunner, msConvertFile, Options.MSConvertTimeoutMinutes);
+            var currentTask = string.Format("creating the .mzML file for CV {0:F0}", cvValue);
+
+            return WaitForMSConvertToFinish(programRunner, msConvertFile, currentTask, Options.MSConvertTimeoutMinutes);
         }
 
         private bool GetCvValue(XRawFileIO reader, int scanNumber, out float cvValue, out string filterTextMatch, bool showWarnings = false)
@@ -439,8 +456,7 @@ namespace ThermoFAIMStoMzML
 
                     var outputDirectory = new DirectoryInfo(mOutputDirectoryPath);
 
-                    var success = ConvertFile(inputFile, outputDirectory);
-                    return success;
+                    return ConvertFile(inputFile, outputDirectory);
                 }
                 catch (Exception ex)
                 {
@@ -455,12 +471,78 @@ namespace ThermoFAIMStoMzML
             }
         }
 
-        private bool RenumberScans(FileInfo originalFile)
+        private bool ReindexRenumberedFile(
+            FileInfo msConvertFile,
+            FileInfo cvFilteredFile,
+            FileInfo renumberedScansFile,
+            int maxRuntimeMinutes = 120)
         {
-            var updatedFile = new FileInfo(originalFile.FullName + ".renumbered");
-
             try
             {
+                // Replace the original file with an indexed version of the file with renumbered scans
+
+                ShowMessage(string.Format("Adding an index to file {0}", renumberedScansFile.Name));
+
+                var finalFilePath = cvFilteredFile.FullName;
+
+                cvFilteredFile.Delete();
+
+                var arguments = string.Format("--mzML --zlib {0} --outfile {1}",
+                    PathUtils.PossiblyQuotePath(renumberedScansFile.FullName),
+                    PathUtils.PossiblyQuotePath(finalFilePath));
+
+                if (Options.Preview)
+                {
+                    ShowDebugNoLog("Preview of call to " + msConvertFile.FullName);
+                    ShowDebugNoLog(string.Format("{0} {1}", msConvertFile.Name, arguments));
+                    return true;
+                }
+
+                var programRunner = new ProgRunner
+                {
+                    CreateNoWindow = true,
+                    CacheStandardOutput = false,
+                    EchoOutputToConsole = true,
+                    WriteConsoleOutputToFile = false,
+                    Name = "MSConvert",
+                    Program = msConvertFile.FullName,
+                    Arguments = arguments,
+                    WorkDir = renumberedScansFile.DirectoryName
+                };
+
+                RegisterEvents(programRunner);
+
+                programRunner.StartAndMonitorProgram();
+
+                const string currentTask = "adding an index to the .mzML file with renumbered scans";
+
+                return WaitForMSConvertToFinish(programRunner, msConvertFile, currentTask, maxRuntimeMinutes);
+            }
+            catch (Exception ex)
+            {
+                HandleException("Error re-indexing the renumbered .mzML file", ex);
+                return false;
+            }
+        }
+
+        private bool RenumberScans(FileInfo cvFilteredFile, out FileInfo renumberedScansFile)
+        {
+            try
+            {
+                ShowMessage(string.Format("Renumbering the spectra in file {0}", cvFilteredFile.Name));
+
+                if (cvFilteredFile.Directory == null)
+                {
+                    throw new Exception("Cannot determine the parent directory of the input file: " + cvFilteredFile.FullName);
+                }
+
+                var updatedFileName = string.Format("{0}{1}", Path.GetFileNameWithoutExtension(cvFilteredFile.Name), "_renumbered.mzML");
+                renumberedScansFile = new FileInfo(Path.Combine(cvFilteredFile.Directory.FullName, updatedFileName));
+
+                // Option 1: use MzMLReader and MzMLWriter
+                // This has the downside of caching the entire file in memory
+
+                /*
                 var reader = new PSI_Interface.MSData.mzML.MzMLReader(originalFile.FullName);
                 var mzMLData = reader.Read();
 
@@ -485,27 +567,82 @@ namespace ThermoFAIMStoMzML
                 }
 
                 writer.Write(mzMLData);
-            }
-            catch (Exception ex)
-            {
-                HandleException("Error renumbering scans in RenumberScans", ex);
-                return false;
-            }
+                */
 
-            try
-            {
-                // Swap the files
-                var finalFilePath = originalFile.FullName;
+                // Option 2: use a forward-only XML reader to read/write the XML
+                // This works, but given that the input file is from MSConvert, we can safely assume that it will be well-formatted
 
-                originalFile.MoveTo(originalFile.FullName + ".original");
+                // Option 3: use a simple text reader
 
-                updatedFile.MoveTo(finalFilePath);
+                if (Options.Preview)
+                {
+                    ShowDebugNoLog(string.Format("Would next read {0} to create {1}", cvFilteredFile.Name, renumberedScansFile.Name));
+                    return true;
+                }
+
+                var scanMatcher = new Regex(@"^(?<Prefix> *<spectrum index="")(?<Index>\d+)(?<ControllerInfo>"" id=""controllerType=\d+ controllerNumber=\d+ scan=)(?<Scan>\d+)(?<Suffix>"".+)");
+
+                var scanNumber = 0;
+                var skippedIndexMzMLElement = false;
+
+                using var reader = new StreamReader(new FileStream(cvFilteredFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
+                using var writer = new StreamWriter(new FileStream(renumberedScansFile.FullName, FileMode.Create, FileAccess.Write, FileShare.Read));
+
+                writer.NewLine = "\n";
+
+                while (!reader.EndOfStream)
+                {
+                    var dataLine = reader.ReadLine();
+
+                    if (dataLine == null)
+                        continue;
+
+                    // ReSharper disable once StringLiteralTypo
+                    if (!skippedIndexMzMLElement && dataLine.TrimStart().StartsWith("<indexedmzML"))
+                    {
+                        // Skip this line
+                        skippedIndexMzMLElement = true;
+                        continue;
+                    }
+
+                    var match = scanMatcher.Match(dataLine);
+
+                    if (!match.Success)
+                    {
+                        if (dataLine.TrimStart().StartsWith("<spectrum "))
+                        {
+                            throw new Exception("Spectrum line did not match the expected pattern; unable to update the scan number for\n" + dataLine);
+                        }
+
+                        writer.WriteLine(dataLine);
+
+                        if (dataLine.Trim().Equals("</mzML>"))
+                        {
+                            // The remaining lines are the index; skip them
+                            break;
+                        }
+
+                        continue;
+                    }
+
+                    scanNumber++;
+
+                    var updatedLine = string.Format("{0}{1}{2}{3}{4}",
+                        match.Groups["Prefix"],
+                        scanNumber - 1,
+                        match.Groups["ControllerInfo"],
+                        scanNumber,
+                        match.Groups["Suffix"]);
+
+                    writer.WriteLine(updatedLine);
+                }
 
                 return true;
             }
             catch (Exception ex)
             {
-                HandleException("Error swapping files in RenumberScans", ex);
+                HandleException("Error renumbering scans in the .mzML file", ex);
+                renumberedScansFile = null;
                 return false;
             }
         }
@@ -533,9 +670,14 @@ namespace ThermoFAIMStoMzML
         /// </summary>
         /// <param name="programRunner">Program runner instance</param>
         /// <param name="msConvertFile">msconvert.exe</param>
+        /// <param name="currentTask">Description of the current task</param>
         /// <param name="maxRuntimeMinutes">Maximum runtime, in minutes</param>
         /// <returns>True if success, false the maximum runtime was exceeded or an error occurred</returns>
-        private bool WaitForMSConvertToFinish(ProgRunner programRunner, FileInfo msConvertFile, int maxRuntimeMinutes)
+        private bool WaitForMSConvertToFinish(
+            ProgRunner programRunner,
+            FileInfo msConvertFile,
+            string currentTask,
+            int maxRuntimeMinutes)
         {
             var startTime = DateTime.UtcNow;
             var runtimeExceeded = false;
@@ -558,8 +700,8 @@ namespace ThermoFAIMStoMzML
             if (runtimeExceeded)
             {
                 ShowErrorMessage(string.Format(
-                    "{0} runtime surpassed {1} minutes; aborting.  Use /Timeout to allow MSConvert to run longer, e.g. /Timeout:10",
-                    msConvertFile.Name, maxRuntimeMinutes));
+                    "{0} runtime surpassed {1} minutes while {2}; aborting. Use /Timeout to allow MSConvert to run longer, e.g. /Timeout:10",
+                    msConvertFile.Name, maxRuntimeMinutes, currentTask));
 
                 programRunner.StopMonitoringProgram(kill: true);
                 return false;
