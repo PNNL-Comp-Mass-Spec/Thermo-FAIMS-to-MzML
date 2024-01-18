@@ -14,7 +14,7 @@ namespace ThermoFAIMStoMzML
         private static int Main(string[] args)
         {
             var exeName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name;
-            var exePath = ProcessFilesOrDirectoriesBase.GetAppPath();
+            var exePath = AppUtils.GetAppPath();
 
             var parser = new CommandLineParser<ThermoFAIMStoMzMLOptions>(exeName, GetAppVersion())
             {
@@ -88,7 +88,7 @@ namespace ThermoFAIMStoMzML
 
         private static string GetAppVersion()
         {
-            return ProcessFilesOrDirectoriesBase.GetAppVersion(PROGRAM_DATE);
+            return AppUtils.GetAppVersion(PROGRAM_DATE);
         }
 
         private static void ShowErrorMessage(string message, Exception ex = null)

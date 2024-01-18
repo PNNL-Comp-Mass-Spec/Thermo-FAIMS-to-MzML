@@ -454,7 +454,7 @@ namespace ThermoFAIMStoMzML
             // Loop until program is complete, or until MaxRuntimeSeconds elapses
             while (programRunner.State != ProgRunner.States.NotMonitoring)
             {
-                ProgRunner.SleepMilliseconds(2000);
+                AppUtils.SleepMilliseconds(2000);
 
                 if (maxRuntimeMinutes <= 0)
                     continue;
