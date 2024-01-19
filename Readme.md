@@ -9,46 +9,54 @@ the .raw file.  This is similar to the [FAIMS-MzXML-Generator](https://github.co
 ### Background
 
 MaxQuant currently does not process FAIMS data correctly if multiple compensation voltages are used through the experiment's duration.
-Both this program and the [FAIMS-MzXML-Generator](https://github.com/PNNL-Comp-Mass-Spec/FAIMS-MzXML-Generator/releases) 
-split a FAIMS-based Thermo .raw file into a set of files, each containing only scans collected using a single compensation voltage. 
+Both this program and the [FAIMS-MzXML-Generator](https://github.com/PNNL-Comp-Mass-Spec/FAIMS-MzXML-Generator/releases)
+split a FAIMS-based Thermo .raw file into a set of files, each containing only scans collected using a single compensation voltage.
 However, as of March 2020, MaxQuant does not support reading .mzML files.  Still, the output files created by this program are still valid .mzML files and other downstream processing tools may benefit from the availability of these files.
 
 ## Syntax
 
 ```
-ThermoFAIMStoMzML.exe 
- InputFilePath [-O:OutputDirectoryPath] 
- [-S] [-R:Levels] [-Timeout:Minutes] [-IE] 
- [-L] [-LogFile:LogFilePath] [-Preview]
+ThermoFAIMStoMzML.exe
+ InputFilePath [/O:OutputDirectoryPath]
+ [/RenumberScans] 
+ [/ScanStart:StartScan] [/ScanEnd:EndScan]
+ [/S] [/R:Levels] [/Timeout:Minutes] [/IE]
+ [/L] [/LogFile:LogFilePath] [/Preview]
  [/ParamFile:ParamFileName.conf] [/CreateParamFile]
 ```
 
 The first argument specifies the input .raw file
-* Either just enter the name, or use `-I:DatasetName.raw`
+* Either just enter the name, or use `/I:DatasetName.raw` or `-I:DatasetName.raw`
 * Can contain the wildcard character, for example `-I:*.raw`
-                      
-Optionally use `-O` to specify the output directory path
+
+Optionally use `/O` to specify the output directory path
 * If omitted, the output files will
 
-Use `-Timeout` to specify the maximum runtime (in minutes) for each call to MSConvert.exe
-* The default is `-Timeout:5`
-  * Use a larger value for large .Raw files with lots of scans and/or data
+Use `/RenumberScans` or `/Renumber` to renumber the scans in the output files so that the first scan is always scan 1 and there are no scan gaps
+* This is helpful when processing the data with DIA-NN, since it apparently requires that the first scan be scan 1 and that the scan numbers be contiguous
+
+Optionally use `/ScanStart` and `/ScanEnd` to limit the scan range to include in the output files (filtering on scan number in the input file)
+* For example, `/ScanStart:1 /ScanEnd:1000` would only include scans 1 through 1000 in the output files
+ 
+Use `/Timeout` to specify the maximum runtime (in minutes) for each call to MSConvert.exe
+* The default is `/Timeout:5`
+  * Use a larger value for large .Raw files with a large number of scans and/or dense mass spectra
 * This parameter is necessary because if MSConvert.exe encounters an error, the program freezes, waiting for the user to press Ctrl+C
   * By specifying a timeout, this software will terminate MSConvert.exe if it runs too long
 
-Use `-S` (or `-Recurse`) to process files in the current directory and in its subdirectories
-* Optionally specify the maximum depth using `-R`, for example `-R:2`
-* The default is `-R:0` which means to recurse infinitely
- * `-R:1` effectively disables recursing
- * `-R:2` means to process the current directory and files in just this directory's subdirectories
+Use `/S` (or `/Recurse`) to process files in the current directory and in its subdirectories
+* Optionally specify the maximum depth using `/R`, for example `/R:2`
+* The default is `/R:0` which means to recurse infinitely
+ * `/R:1` effectively disables recursing
+ * `/R:2` means to process the current directory and files in just this directory's subdirectories
 
-Use `-IE` or `-IgnoreErrors` to ignore errors while recursively processing files
+Use `/IE` or `/IgnoreErrors` to ignore errors while recursively processing files
 * This also applies when when processing files with a wildcard
 
-Use `-L` to enable logging messages to a file.
-* Optionally use `-LogFile:FilePath` to specify the log file path
+Use `/L` to enable logging messages to a file.
+* Optionally use `/LogFile:FilePath` to specify the log file path
 
-Use `-Preview` to preview the commands that would be run
+Use `/Preview` to preview the commands that would be run
 
 The processing options can be specified in a parameter file using `/ParamFile:Options.conf` or `/Conf:Options.conf`
 * Define options using the format `ArgumentName=Value`
@@ -62,14 +70,14 @@ Use `/CreateParamFile` to create an example parameter file
 ## Contacts
 
 Written by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) \
-E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov\
-Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics/
+E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov \
+Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://www.pnnl.gov/integrative-omics \
 Source code: https://github.com/PNNL-Comp-Mass-Spec/Thermo-FAIMS-to-MzML
 
 ## License
 
-The Thermo FAIMS to mzML Converter is licensed under the 2-Clause BSD License; 
-you may not use this program except in compliance with the License. You may obtain 
+The Thermo FAIMS to mzML Converter is licensed under the 2-Clause BSD License;
+you may not use this program except in compliance with the License. You may obtain
 a copy of the License at https://opensource.org/licenses/BSD-2-Clause
 
 Copyright 2020 Battelle Memorial Institute
