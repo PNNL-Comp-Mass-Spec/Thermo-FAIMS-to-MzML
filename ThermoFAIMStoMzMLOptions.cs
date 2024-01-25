@@ -14,6 +14,10 @@ namespace ThermoFAIMStoMzML
             HelpText = "Output directory path; if omitted, the output files will be created in the program directory.")]
         public string OutputDirectoryPath { get; set; }
 
+        [Option("CentroidSpectra", "Centroid", HelpShowsDefault = false,
+            HelpText = "When true, use MSConvert's peak picking algorithm to centroid the mass spectra")]
+        public bool CentroidSpectra { get; set; }
+
         [Option("RenumberScans", "Renumber", HelpShowsDefault = false,
             HelpText = "When true, update scan numbers so that the first scan is 1 and there are no scan gaps")]
         public bool RenumberScans { get; set; }
@@ -63,6 +67,7 @@ namespace ThermoFAIMStoMzML
             InputDataFilePath = string.Empty;
             OutputDirectoryPath = string.Empty;
 
+            CentroidSpectra = false;
             RenumberScans = false;
             ScanStart = 0;
             ScanEnd = 0;

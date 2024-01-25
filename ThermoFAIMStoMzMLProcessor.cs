@@ -226,6 +226,7 @@ namespace ThermoFAIMStoMzML
         {
             string inputFilePath;
             string outputFilePath;
+
             if (inputFile.DirectoryName?.Equals(outputFile.DirectoryName) == true)
             {
                 inputFilePath = inputFile.Name;
@@ -257,13 +258,17 @@ namespace ThermoFAIMStoMzML
                 scanFilter = string.Empty;
             }
 
+            var peakPickingFilter = Options.CentroidSpectra
+                ? " --filter \"peakPicking true 1-\""
+                : string.Empty;
+
             var arguments = string.Format(
-                " --32 --mzML --zlib" +
-                " --filter \"thermoScanFilter contains include {0}\"" +
-                "{1}" +
-                " --outfile {2}" +
-                " {3}",
-                cvTextFilter, scanFilter, outputFilePath, inputFilePath);
+                " --32 --mzML --zlib" + "{0}" +
+                " --filter \"thermoScanFilter contains include {1}\"" +
+                "{2}" +
+                " --outfile {3}" +
+                " {4}",
+                peakPickingFilter, cvTextFilter, scanFilter, outputFilePath, inputFilePath);
 
             if (Options.Preview)
             {

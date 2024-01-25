@@ -18,7 +18,7 @@ However, as of March 2020, MaxQuant does not support reading .mzML files.  Still
 ```
 ThermoFAIMStoMzML.exe
  InputFilePath [/O:OutputDirectoryPath]
- [/RenumberScans] 
+ [/Centroid] [/Renumber]
  [/ScanStart:StartScan] [/ScanEnd:EndScan]
  [/S] [/R:Levels] [/Timeout:Minutes] [/IE]
  [/L] [/LogFile:LogFilePath] [/Preview]
@@ -32,12 +32,14 @@ The first argument specifies the input .raw file
 Optionally use `/O` to specify the output directory path
 * If omitted, the output files will
 
-Use `/RenumberScans` or `/Renumber` to renumber the scans in the output files so that the first scan is always scan 1 and there are no scan gaps
+Use `/Centroid` or `/CentroidSpectra` to use a peak picking algorithm to centroid the mass spectra
+
+Use `/Renumber` or `/RenumberScans` to renumber the scans in the output files so that the first scan is always scan 1 and there are no scan gaps
 * This is helpful when processing the data with DIA-NN, since it apparently requires that the first scan be scan 1 and that the scan numbers be contiguous
 
 Optionally use `/ScanStart` and `/ScanEnd` to limit the scan range to include in the output files (filtering on scan number in the input file)
 * For example, `/ScanStart:1 /ScanEnd:1000` would only include scans 1 through 1000 in the output files
- 
+
 Use `/Timeout` to specify the maximum runtime (in minutes) for each call to MSConvert.exe
 * The default is `/Timeout:5`
   * Use a larger value for large .Raw files with a large number of scans and/or dense mass spectra
