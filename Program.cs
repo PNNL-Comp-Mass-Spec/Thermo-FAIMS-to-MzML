@@ -21,7 +21,7 @@ namespace ThermoFAIMStoMzML
                               "creating one .mzML file for each FAIMS compensation voltage (CV) value in the .raw file",
                 ContactInfo = "Program written by Matthew Monroe for PNNL (Richland, WA)" + Environment.NewLine +
                               "E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov" + Environment.NewLine +
-                              "Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics"
+                              "Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://www.pnnl.gov/integrative-omics"
             };
 
             // Allow /Conf in addition to /ParamFile for specifying a text file with Key=Value options
